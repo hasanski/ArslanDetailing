@@ -1,3 +1,5 @@
+using Application.Core;
+using Application.Queries;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -10,8 +12,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddCors();
-
-
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetPartList.Handler>());
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

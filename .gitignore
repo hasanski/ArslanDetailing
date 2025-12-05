@@ -484,3 +484,5 @@ $RECYCLE.BIN/
 *.swp
 API/appsettings.json
 API/ArslanDetailing.db
+API/ArslanDetailing.db-shm
+API/ArslanDetailing.db-wal
