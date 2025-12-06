@@ -1,6 +1,7 @@
-import { List, ListItem, ListItemText, Typography } from "@mui/material";
+import { CssBaseline, List, ListItem, ListItemText } from "@mui/material";
 import axios from "axios";
 import { Fragment, useEffect, useState } from "react";
+import NavBar from "./NavBar";
 
 function App() {
   const [parts, setParts] = useState<Part[]>([]);
@@ -14,7 +15,8 @@ function App() {
 
   return (
     <Fragment>
-      <Typography variant="h3">Parts</Typography>
+      <CssBaseline />
+      <NavBar />
       <List>
         {parts.map((part) => (
           <ListItem key={part.partID}>
