@@ -1,14 +1,16 @@
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import type { FormEvent } from "react";
+import { useParts } from "../../../lib/hooks/useParts";
 
 type Props = {
   part?: Part;
   closeForm: () => void;
-  submitForm: (part: Part) => void;
 };
 
-export default function PartForm({ part, closeForm, submitForm }: Props) {
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+export default function PartForm({ part, closeForm }: Props) {
+  const { updatePartMutation, createPartMutation } = useParts();
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
@@ -20,10 +22,21 @@ export default function PartForm({ part, closeForm, submitForm }: Props) {
       defaultUnitPrice: parseFloat(
         formData.get("defaultUnitPrice")?.toString() || "0"
       ),
-      notes: formData.get("notes")?.toString() || "",
+      notes: formData.get("notes")?.toString() || ""
+
     };
 
-    submitForm(partToSubmit);
+    if (part) {
+      // حالة Edit
+      partToSubmit.partID = part.partID; // نتأكد إنه نفس الـ ID
+      await updatePartMutation.mutateAsync(partToSubmit);
+      closeForm();
+    }else {
+      // حالة Create
+      await createPartMutation.mutateAsync(partToSubmit);
+      closeForm();
+    }
+
   };
 
   return (
@@ -70,7 +83,12 @@ export default function PartForm({ part, closeForm, submitForm }: Props) {
           <Button onClick={closeForm} color="inherit">
             Cancel
           </Button>
-          <Button type="submit" color="success" variant="contained">
+          <Button
+            type="submit"
+            color="success"
+            variant="contained"
+            disabled={updatePartMutation.isPending || createPartMutation.isPending}
+          >
             Save
           </Button>
         </Box>

@@ -11,5 +11,5 @@ public class Part
     public decimal? DefaultUnitPrice { get; set; }
     public string? Notes { get; set; }
 
-    public ICollection<JobServicePart> JobServiceParts { get; set; }
+    public ICollection<JobServicePart> JobServiceParts { get; set; } = new List<JobServicePart>();
 }

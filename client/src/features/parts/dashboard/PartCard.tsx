@@ -1,12 +1,13 @@
 import {Box, Button, Card, CardActions, CardContent, Chip, Typography} from "@mui/material"
+import { useParts } from "../../../lib/hooks/useParts";
 
 type Props = {
   part: Part
   selectPart: (partID: number) => void
-  deletePart: (partID: number) => void
 }
 
-export default function PartCard({part,selectPart, deletePart}: Props) {
+export default function PartCard({part,selectPart}: Props) {
+  const {deletePartMutation} = useParts();
   return (
     <Card sx={{borderRadius:3}}>
         <CardContent>
@@ -19,7 +20,15 @@ export default function PartCard({part,selectPart, deletePart}: Props) {
             <Chip label={part.category} variant="outlined"/>
             <Box display='flex' gap={3}>
               <Button onClick={()=> selectPart(part.partID)} size="medium" variant="contained">View</Button>
-              <Button onClick={()=> deletePart(part.partID)} size="medium" color="error" variant="contained">Delete</Button>
+              <Button onClick={()=> 
+                deletePartMutation.mutate(part.partID)} 
+                disabled={deletePartMutation.isPending}
+                size="medium" 
+                color="error" 
+                variant="contained"
+                
+                >
+                  Delete</Button>
             </Box>
         </CardActions>
     </Card>

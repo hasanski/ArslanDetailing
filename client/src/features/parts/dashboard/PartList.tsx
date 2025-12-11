@@ -5,9 +5,8 @@ type Props = {
   selectPart: (partID: number) => void
   selectedPart: Part | undefined
   cancelSelectPart: () => void
-  deletePart: (partID: number) => void
 }
-export default function PartList({ parts, selectPart, deletePart}: Props) {
+export default function PartList({ parts, selectPart}: Props) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       {parts.map(part => (
@@ -15,7 +14,6 @@ export default function PartList({ parts, selectPart, deletePart}: Props) {
         key={part.partID} 
         part={part} 
         selectPart={selectPart}
-        deletePart={deletePart}
         />
       ))}
       

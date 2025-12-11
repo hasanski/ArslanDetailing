@@ -11,13 +11,11 @@ type Props = {
   openForm: (id: number) => void
   closeForm: () => void
   editMode: boolean
-  submitForm: (part: Part) => void
-  deletePart: (partID: number) => void
 }
 
 
 export default function PartsDashboard({ parts, selectPart, selectedPart, cancelSelectPart,
-   openForm, closeForm, editMode, submitForm, deletePart }: Props) {
+   openForm, closeForm, editMode }: Props) {
   return (
     <Grid container spacing={3}>
       <Grid size={7} >
@@ -26,8 +24,7 @@ export default function PartsDashboard({ parts, selectPart, selectedPart, cancel
           selectPart={selectPart}
           selectedPart={selectedPart}
           cancelSelectPart={cancelSelectPart}
-          deletePart={deletePart}
-          
+              
         />
         {/* <List>
           {parts.map((part) => (
@@ -39,7 +36,7 @@ export default function PartsDashboard({ parts, selectPart, selectedPart, cancel
       </Grid>
       <Grid size={5}>
         {selectedPart && !editMode && <PartDetail
-          part={selectedPart}
+          selectedPart={selectedPart}
           cancelSelectPart={cancelSelectPart}
           openForm={openForm}
 
@@ -49,7 +46,6 @@ export default function PartsDashboard({ parts, selectPart, selectedPart, cancel
         {editMode && <PartForm 
         closeForm={closeForm} 
         part={selectedPart}
-        submitForm={submitForm}
         />}
        
       </Grid>
