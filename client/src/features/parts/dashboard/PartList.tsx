@@ -1,22 +1,19 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import PartCard from "./PartCard";
-type Props = {
-  parts: Part[]
-  selectPart: (partID: number) => void
-  selectedPart: Part | undefined
-  cancelSelectPart: () => void
-}
-export default function PartList({ parts, selectPart}: Props) {
+import { useParts } from "../../../lib/hooks/useParts";
+
+export default function PartList() {
+  const { parts, isPending } = useParts();
+  if (!parts || isPending) return <Typography>Loading...</Typography>;
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       {parts.map(part => (
-        <PartCard 
-        key={part.partID} 
-        part={part} 
-        selectPart={selectPart}
+        <PartCard
+          key={part.partID}
+          part={part}
         />
       ))}
-      
-      </Box>
+
+    </Box>
   )
 }

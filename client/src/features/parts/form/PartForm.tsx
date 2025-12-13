@@ -2,14 +2,11 @@ import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import type { FormEvent } from "react";
 import { useParts } from "../../../lib/hooks/useParts";
 
-type Props = {
-  part?: Part;
-  closeForm: () => void;
-};
 
-export default function PartForm({ part, closeForm }: Props) {
+
+export default function PartForm() {
   const { updatePartMutation, createPartMutation } = useParts();
-
+  const part = {} as Part; // لاحقاً سيتم جلب الجزء المراد تعديله
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -30,11 +27,9 @@ export default function PartForm({ part, closeForm }: Props) {
       // حالة Edit
       partToSubmit.partID = part.partID; // نتأكد إنه نفس الـ ID
       await updatePartMutation.mutateAsync(partToSubmit);
-      closeForm();
     }else {
       // حالة Create
       await createPartMutation.mutateAsync(partToSubmit);
-      closeForm();
     }
 
   };
@@ -80,7 +75,7 @@ export default function PartForm({ part, closeForm }: Props) {
         />
 
         <Box display="flex" justifyContent="end" gap={3}>
-          <Button onClick={closeForm} color="inherit">
+          <Button color="inherit">
             Cancel
           </Button>
           <Button

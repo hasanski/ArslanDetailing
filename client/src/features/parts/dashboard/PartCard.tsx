@@ -16,10 +16,9 @@ import { useParts } from "../../../lib/hooks/useParts";
 
 type Props = {
   part: Part;
-  selectPart: (partID: number) => void;
 };
 
-export default function PartCard({ part, selectPart }: Props) {
+export default function PartCard({ part }: Props) {
   const { deletePartMutation } = useParts();
 
   // حالة الـ Dialog
@@ -57,7 +56,7 @@ export default function PartCard({ part, selectPart }: Props) {
 
           <Box display="flex" gap={3}>
             <Button
-              onClick={() => selectPart(part.partID)}
+              onClick={() => {}}
               size="medium"
               variant="contained"
             >
