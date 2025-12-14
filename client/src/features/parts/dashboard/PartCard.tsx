@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useParts } from "../../../lib/hooks/useParts";
+import { Link } from "react-router";
 
 type Props = {
   part: Part;
@@ -56,7 +57,7 @@ export default function PartCard({ part }: Props) {
 
           <Box display="flex" gap={3}>
             <Button
-              onClick={() => {}}
+              component={Link} to={`/parts/${part.partID}`}
               size="medium"
               variant="contained"
             >

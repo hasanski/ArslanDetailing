@@ -1,15 +1,10 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material"
-import { useParts } from "../../../lib/hooks/useParts"
+import { Link, useNavigate } from "react-router";
 
-type Props = {
-    selectedPart: Part
-    cancelSelectPart: () => void
-    openForm: (id: number) => void
 
-}
-export default function PartDetail({ selectedPart, cancelSelectPart, openForm }: Props) {
-    const {parts} = useParts();
-    const part = parts?.find(p => p.partID === selectedPart.partID);
+export default function PartDetail() {
+    const navigate = useNavigate();
+    const part = {} as Part; // لاحقاً سيتم جلب الجزء المراد عرضه
     if (!part) {
         return <Typography variant="h6">Part not found</Typography>
     }
@@ -22,9 +17,8 @@ export default function PartDetail({ selectedPart, cancelSelectPart, openForm }:
                 <Typography variant="body1">{part.defaultUnitPrice}</Typography>
             </CardContent>
             <CardActions>
-                <Button onClick={() => openForm(part.partID)} color="primary" size="small">Edit</Button>
-                <Button onClick={cancelSelectPart} color="inherit" size="small">Cancel</Button>
-
+                <Button component={Link} to={`/parts/${part.partID}`} color="primary" size="small">Edit</Button>
+                <Button onClick={()=>navigate('/parts')} color="inherit" size="small">Cancel</Button>
             </CardActions>
         </Card>
     )

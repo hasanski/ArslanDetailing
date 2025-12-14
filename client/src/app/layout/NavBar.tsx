@@ -1,6 +1,7 @@
 import { Group } from "@mui/icons-material";
-import { Box, AppBar, Toolbar, Typography, Container, MenuItem, Button } from "@mui/material";
-
+import { Box, AppBar, Toolbar, Typography, Container, MenuItem } from "@mui/material";
+import { NavLink } from "react-router";
+import MenuItemLink from "../shared/components/MenuItemLink";
 export default function NavBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -10,7 +11,7 @@ export default function NavBar() {
         <Container maxWidth="xl">
           <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Box>
-              <MenuItem sx={{ display: 'flex', gap: 2 }}>
+              <MenuItem component={NavLink} to='/' sx={{ display: 'flex', gap: 2 }}>
                 <Group fontSize="large" />
                 <Typography variant="h6" fontWeight='bold'>
                   Arslan Detailing
@@ -18,19 +19,17 @@ export default function NavBar() {
               </MenuItem>
             </Box>
             <Box sx={{ display: 'flex' }}>
-              <MenuItem sx={{ fontSize: '1.2rem', textTransform: 'uppercase', fontWeight: 'bold' }}>
+              <MenuItemLink to='/parts'>
                 Parts
-              </MenuItem>
-              <MenuItem sx={{ fontSize: '1.2rem', textTransform: 'uppercase', fontWeight: 'bold' }}>
-                About
-              </MenuItem>
-              <MenuItem sx={{ fontSize: '1.2rem', textTransform: 'uppercase', fontWeight: 'bold' }}>
-                Content
-              </MenuItem>
+              </MenuItemLink>
+              <MenuItemLink to='/createPart' >
+                Create Part
+              </MenuItemLink>
+
             </Box>
-            <Button size="large" variant="contained" color="warning" onClick={() => {}}>
-              Create Part
-              </Button>
+            <MenuItem>
+              User Menu
+            </MenuItem>
           </Toolbar>
         </Container>
 
