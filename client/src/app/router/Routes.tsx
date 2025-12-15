@@ -4,6 +4,7 @@ import HomePage from "../../features/home/HomePage";
 import PartsDashboard from "../../features/parts/dashboard/PartsDashboard";
 import PartForm from "../../features/parts/form/PartForm";
 import PartDetailPage from "../../features/parts/details/PartDetailPage";
+import Counter from "../../features/counter/Counter";
 
 export const router = createBrowserRouter([
     {
@@ -14,7 +15,8 @@ export const router = createBrowserRouter([
             { path: 'parts', element: <PartsDashboard /> },
             { path: 'parts/:id', element: <PartDetailPage /> },
             { path: 'createPart', element: <PartForm key='create' /> },
-            { path: 'manage/:id', element: <PartForm /> }
+            { path: 'manage/:id', element: <PartForm /> },
+            { path: 'counter', element: <Counter /> }
         ]
     }
 ]);
