@@ -1,18 +1,17 @@
+
+import { AccessTime, Place } from "@mui/icons-material";
 import {
+  Avatar,
   Box,
   Button,
   Card,
-  CardActions,
   CardContent,
+  CardHeader,
   Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
+  Divider,
   Typography
+
 } from "@mui/material";
-import { useState } from "react";
-import { useParts } from "../../../lib/hooks/useParts";
 import { Link } from "react-router";
 
 type Props = {
@@ -20,88 +19,64 @@ type Props = {
 };
 
 export default function PartCard({ part }: Props) {
-  const { deletePartMutation } = useParts();
-
+  const isHost = false;
+  const isGoing = false;
+  const label = isHost ? 'You are hosting' : 'You are going';
+  const isCanceled = false;
+  const color = isHost ? 'secondary' : isGoing ? 'warning' : 'default';
   // حالة الـ Dialog
-  const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const handleDelete = () => {
-    setConfirmOpen(true);
-  };
 
-  const handleClose = () => {
-    setConfirmOpen(false);
-  };
-
-  const handleConfirmDelete = async () => {
-    await deletePartMutation.mutateAsync(part.partID);
-    setConfirmOpen(false);
-  };
 
   return (
     <>
-      <Card sx={{ borderRadius: 3 }}>
-        <CardContent>
-          <Typography variant="h5">{part.partID}</Typography>
-          <Typography sx={{ color: "text.secondary", mb: 1 }}>
-            {part.partName}
-          </Typography>
-          <Typography variant="body2">{part.partNumber}</Typography>
-          <Typography variant="subtitle1">{part.defaultUnitPrice}</Typography>
+      <Card elevation={3} sx={{ borderRadius: 3 }}>
+        <Box display='flex' alignItems='center' justifyContent='space-between'>
+          <CardHeader avatar={<Avatar sx={{ height: 80, width: 80 }}></Avatar>}
+            title={part.partName}
+            titleTypographyProps={{
+              fontWeight: 'bold', fontSize: 20
+            }}
+            subheader={
+              <>
+                Hosted By {''} <Link to={`/profiles/bob`}>Bob</Link>
+              </>
+            } />
+          <Box display='flex' flexDirection='column' gap={2} mr={2}>
+            {(isHost || isGoing) && <Chip label={label} color={color} sx={{ borderRadius: 2 }} />}
+            {isCanceled && <Chip label='Canceled' color='error' sx={{ borderRadius: 2 }} />}
+          </Box>
+        </Box>
+        <Divider sx={{ mb: 3 }} />
+        <CardContent sx={{ p: 0 }}>
+          <Box display="flex" alignItems='center' mb={2} px={2}>
+            <AccessTime sx={{ mr: 1 }} />
+            <Typography variant="body2">{part.partNumber}</Typography>
+            <Place sx={{ ml: 3, mr: 1 }} />
+            <Typography variant="body2">{part.defaultUnitPrice}</Typography>
+          </Box>
+          <Divider />
+          <Box display="flex" gap={2} sx={{ backgroundColor: 'gray.200', py: 3, pl: 3 }} >
+            Attendees go here
+          </Box>
         </CardContent>
 
-        <CardActions
-          sx={{ display: "flex", justifyContent: "space-between", pb: 2 }}
+        <CardContent
+          sx={{ pb: 2 }}
         >
-          <Chip label={part.category} variant="outlined" />
-
-          <Box display="flex" gap={3}>
-            <Button
-              component={Link} to={`/parts/${part.partID}`}
-              size="medium"
-              variant="contained"
-            >
-              View
-            </Button>
-
-            <Button
-              onClick={handleDelete}
-              disabled={deletePartMutation.isPending}
-              size="medium"
-              color="error"
-              variant="contained"
-            >
-              Delete
-            </Button>
-          </Box>
-        </CardActions>
-      </Card>
-
-      {/* CONFIRM DELETE DIALOG */}
-      <Dialog open={confirmOpen} onClose={handleClose} dir="rtl">
-        <DialogTitle>تأكيد الحذف</DialogTitle>
-
-        <DialogContent>
-          <Typography>
-            هل أنت متأكد من حذف القطعة:
-            <strong> {part.partName}</strong>؟
-          </Typography>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={handleClose} color="inherit">
-            إلغاء
-          </Button>
-
+          <Typography variant="body2">{part.notes}</Typography>
           <Button
-            onClick={handleConfirmDelete}
-            color="error"
-            disabled={deletePartMutation.isPending}
+            component={Link} to={`/parts/${part.partID}`}
+            size="medium"
+            variant="contained"
+            sx={{ display: 'flex', justifySelf: 'self-end', borderRadius: 3 }}
           >
-            حذف
+            View
           </Button>
-        </DialogActions>
-      </Dialog>
+        </CardContent>
+      </Card >
+
+
     </>
   );
 }

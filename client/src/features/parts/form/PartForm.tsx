@@ -1,12 +1,15 @@
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import type { FormEvent } from "react";
 import { useParts } from "../../../lib/hooks/useParts";
+import { useNavigate, useParams } from "react-router";
 
 
 
 export default function PartForm() {
-  const { updatePartMutation, createPartMutation } = useParts();
-  const part = {} as Part; // لاحقاً سيتم جلب الجزء المراد تعديله
+  const { id } = useParams();
+
+  const { updatePartMutation, createPartMutation, part, isPartLoading } = useParts(id ? parseInt(id) : undefined);
+  const navigate = useNavigate();
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -27,12 +30,20 @@ export default function PartForm() {
       // حالة Edit
       partToSubmit.partID = part.partID; // نتأكد إنه نفس الـ ID
       await updatePartMutation.mutateAsync(partToSubmit);
-    }else {
+      navigate(`/parts/${part.partID}`);
+    } else {
       // حالة Create
-      await createPartMutation.mutateAsync(partToSubmit);
+
+      createPartMutation.mutate(partToSubmit, {
+        onSuccess: (createdPartID) => {
+          navigate(`/parts/${createdPartID}`);
+        }
+      });
     }
 
   };
+
+  if (isPartLoading) return <Typography variant="h6">Loading...</Typography>;
 
   return (
     <Paper sx={{ borderRadius: 3, padding: 3 }}>
