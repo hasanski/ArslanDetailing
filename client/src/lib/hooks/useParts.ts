@@ -13,7 +13,7 @@ export const useParts = (id?: number) => {
       const response = await agent.get<Part[]>("/Parts");
       return response.data;
     },
-    enabled: !id && location.pathname === "/parts",
+    enabled: !id && location.pathname === "/parts",//Loading bar
     //staleTime: 1000 * 60 * 5,
   });
 
