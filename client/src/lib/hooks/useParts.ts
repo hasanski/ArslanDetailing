@@ -1,49 +1,44 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
-import agent from "../api/agent";
 import { useLocation } from "react-router";
+import agent from "../api/agent";
 
 export const useParts = (id?: number) => {
   const queryClient = useQueryClient();
   const location = useLocation();
-
-  const { data: parts, isPending } = useQuery({
+  const partsQuery = useQuery({
     queryKey: ["parts"],
     queryFn: async () => {
       const response = await agent.get<Part[]>("/Parts");
       return response.data;
     },
-    enabled: !id && location.pathname === "/parts",//Loading bar
-    //staleTime: 1000 * 60 * 5,
+    enabled: id === undefined && location.pathname === "/parts",
   });
 
-  const { data: part, isLoading: isPartLoading } = useQuery({
+  const partQuery = useQuery({
     queryKey: ["parts", id],
     queryFn: async () => {
-      if (id === undefined) return null;
       const response = await agent.get<Part>(`/Parts/${id}`);
       return response.data;
     },
-    enabled: !!id,
+    enabled: typeof id === "number",
   });
 
   const updatePartMutation = useMutation({
     mutationFn: async (part: Part) => {
       const response = await agent.put<Part>("/Parts", part);
-      return response.data; // should be the created id if part
+      return response.data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ["parts"],
-      });
+      await queryClient.invalidateQueries({ queryKey: ["parts"] });
+      // (اختياري) تحديث part detail إذا مفتوح
+      // await queryClient.invalidateQueries({ queryKey: ["parts", part.partID] });
     },
   });
 
   const createPartMutation = useMutation({
-    mutationFn: async (part: Part) => {
-      // API عندك بيرجع int (الـ PartID الجديد)
-      const response = await agent.post<number>("parts", part);
-      return response.data;
+    mutationFn: async (part: CreatePartDto) => {
+      const response = await agent.post<number>("/Parts", part);
+      return response.data; // new id
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["parts"] });
@@ -52,7 +47,7 @@ export const useParts = (id?: number) => {
 
   const deletePartMutation = useMutation({
     mutationFn: async (partID: number) => {
-      await agent.delete(`parts/${partID}`);
+      await agent.delete(`/Parts/${partID}`);
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["parts"] });
@@ -60,12 +55,14 @@ export const useParts = (id?: number) => {
   });
 
   return {
-    parts,
-    isPending,
+    parts: partsQuery.data,
+    isPending: partsQuery.isPending,
+
+    part: partQuery.data,
+    isPartLoading: partQuery.isLoading,
+
     updatePartMutation,
     createPartMutation,
     deletePartMutation,
-    part,
-    isPartLoading,
   };
 };

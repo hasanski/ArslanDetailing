@@ -63,7 +63,7 @@ export default function PartDetailsHeader({part}: Props) {
                 variant="contained"
                 color="primary"
                 component={Link}
-                to={`/manage/partId`}
+                to={`/manage/${part.partID}`}
                 disabled={isCancelled}
               >
                 Manage Event

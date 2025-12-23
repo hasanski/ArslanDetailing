@@ -6,3 +6,4 @@ type Part = {
   defaultUnitPrice: number;
   notes: string;
 };
+type CreatePartDto = Omit<Part, "partID">;

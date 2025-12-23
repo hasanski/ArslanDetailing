@@ -1,47 +1,80 @@
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
-import type { FormEvent } from "react";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { useParts } from "../../../lib/hooks/useParts";
 import { useNavigate, useParams } from "react-router";
-
+import { useForm } from 'react-hook-form';
+import { useEffect } from "react";
+import { partSchema, type PartSchema } from "../../../lib/schemas/partSchema";
+import { zodResolver } from '@hookform/resolvers/zod';
+import TextInput from "../../../app/shared/components/TextInput";
+import SelectInput from "../../../app/shared/components/SelectInput";
+import { categoryOptions } from "./categoryOptions";
 
 
 export default function PartForm() {
-  const { id } = useParams();
-
-  const { updatePartMutation, createPartMutation, part, isPartLoading } = useParts(id ? parseInt(id) : undefined);
+  const { control, reset, handleSubmit } = useForm<PartSchema>({
+    mode: 'onTouched',
+    resolver: zodResolver(partSchema),
+    defaultValues: {
+      partName: "",
+      partNumber: "",
+      category: "",
+      defaultUnitPrice: 0,
+      notes: "",
+    },
+  });
   const navigate = useNavigate();
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+  const { id } = useParams();
+  const { updatePartMutation, createPartMutation, part, isPartLoading } = useParts(id ? parseInt(id) : undefined);
 
-    const partToSubmit: Part = {
-      partID: part?.partID ?? 0,
-      partName: formData.get("partName")?.toString() || "",
-      partNumber: formData.get("partNumber")?.toString() || "",
-      category: formData.get("category")?.toString() || "",
-      defaultUnitPrice: parseFloat(
-        formData.get("defaultUnitPrice")?.toString() || "0"
-      ),
-      notes: formData.get("notes")?.toString() || ""
+  useEffect(() => {
+    if (part) reset({
+      ...part,
 
-    };
+    });
+  }, [part, reset]);
 
-    if (part) {
-      // حالة Edit
-      partToSubmit.partID = part.partID; // نتأكد إنه نفس الـ ID
-      await updatePartMutation.mutateAsync(partToSubmit);
-      navigate(`/parts/${part.partID}`);
-    } else {
-      // حالة Create
-
-      createPartMutation.mutate(partToSubmit, {
-        onSuccess: (createdPartID) => {
-          navigate(`/parts/${createdPartID}`);
-        }
-      });
+  //   useEffect(() => {
+  //   if (part) {
+  //     reset({
+  //       ...part,
+  //       defaultUnitPrice: part.defaultUnitPrice ?? 0,
+  //     });
+  //   }
+  // }, [part, reset]);
+  const onSubmit = async (data: PartSchema) => {
+    const { ...rest } = data;
+    const flattenedData = { ...rest };
+    try {
+      if (part) {
+        await updatePartMutation.mutateAsync({ ...part, ...flattenedData }, {
+          onSuccess: () => navigate(`/parts/${part.partID}`)
+        });
+      } else {
+        createPartMutation.mutate(flattenedData, {
+          onSuccess: (createdPartID) => navigate(`/parts/${createdPartID}`)
+        })
+      }
+    } catch (error) {
+      console.log(error);
     }
+    console.log(data);
 
-  };
+    // if (part) {
+    //   // حالة Edit
+    //   partToSubmit.partID = part.partID; // نتأكد إنه نفس الـ ID
+    //   await updatePartMutation.mutateAsync(partToSubmit);
+    //   navigate(`/parts/${part.partID}`);
+    // } else {
+    //   // حالة Create
+
+    //   createPartMutation.mutate(partToSubmit, {
+    //     onSuccess: (createdPartID) => {
+    //       navigate(`/parts/${createdPartID}`);
+    //     }
+    //   });
+    // }
+
+  }
 
   if (isPartLoading) return <Typography variant="h6">Loading...</Typography>;
 
@@ -53,37 +86,67 @@ export default function PartForm() {
 
       <Box
         component="form"
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         display="flex"
         flexDirection="column"
         gap={3}
       >
-        <TextField
-          name="partName"
+        {/* <TextField
+          {...register('partName')}
           label="Part Name"
           defaultValue={part?.partName ?? ""}
-        />
-        <TextField
-          name="partNumber"
+          error={!!errors.partName}
+          helperText={errors.partName?.message}
+        /> */}
+        <TextInput label='Part Name' control={control} name='partName' />
+        <TextInput label='Part Number' control={control} name='partNumber' />
+        {/* <TextInput label='Category' control={control} name='category' /> */}
+        <Box display={'flex'} gap={3}>
+          <SelectInput items={categoryOptions} label='Category' control={control} name='category' />
+          <TextInput<PartSchema>
+            name="defaultUnitPrice"
+            control={control}
+            label="Default Unit Price"
+            type="number"
+          />
+        </Box>
+
+
+        <TextInput label='Notes' control={control} name='notes' />
+
+        {/* <TextField
+          {...register('partNumber')}
           label="Part Number"
           defaultValue={part?.partNumber ?? ""}
+          error={!!errors.partNumber}
+          helperText={errors.partNumber?.message}
         />
         <TextField
-          name="category"
+          {...register('category')}
           label="Category"
           defaultValue={part?.category ?? ""}
+          error={!!errors.category}
+          helperText={errors.category?.message}
         />
         <TextField
-          name="defaultUnitPrice"
+          {...register("defaultUnitPrice", {
+            valueAsNumber: true,
+            // لو تركها فاضية: خليها undefined بدل NaN
+            setValueAs: (v) => (v === "" || v === null ? undefined : Number(v)),
+          })}
           label="Price"
           type="number"
           defaultValue={part?.defaultUnitPrice ?? ""}
+          error={!!errors.defaultUnitPrice}
+          helperText={errors.defaultUnitPrice?.message}
         />
         <TextField
-          name="notes"
+          {...register('notes')}
           label="Notes"
           defaultValue={part?.notes ?? ""}
-        />
+          error={!!errors.notes}
+          helperText={errors.notes?.message}
+        /> */}
 
         <Box display="flex" justifyContent="end" gap={3}>
           <Button color="inherit">
