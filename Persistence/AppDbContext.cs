@@ -1,10 +1,11 @@
 using System;
 using Domain;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence;
 
-public class AppDbContext(DbContextOptions options) : DbContext(options)
+public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(options)
 {
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Vehicle> Vehicles { get; set; }
@@ -18,8 +19,10 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<VehicleConditionDetail> VehicleConditionDetails { get; set; }
     public DbSet<ConditionPhoto> ConditionPhotos { get; set; }
 
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         // كل الفلuent API تحت ↓
 
         modelBuilder.Entity<Vehicle>()
@@ -82,7 +85,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             .HasKey(p => p.PhotoId);   // أو p.PhotoID حسب اسم الخاصية عندك
         modelBuilder.Entity<VehicleConditionHeader>()
             .HasKey(h => h.ConditionID);
-            modelBuilder.Entity<VehicleConditionDetail>()
-            .HasKey(h => h.ConditionDetailId);
+        modelBuilder.Entity<VehicleConditionDetail>()
+        .HasKey(h => h.ConditionDetailId);
     }
 }

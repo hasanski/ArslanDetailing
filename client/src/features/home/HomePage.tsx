@@ -32,7 +32,7 @@ export default function HomePage() {
         Welocme to Arslan Detailing
       </Typography>
       <Button component={Link} to='/parts' size='large' variant="contained" sx={{ height: 80, borderRadius: 4, fontSize: '1.5rem' }}>
-        Take Me to the Parts!!!
+        Take Me to the Login!!!
       </Button>
     </Paper>
   )
